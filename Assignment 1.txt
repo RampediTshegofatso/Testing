@@ -1,0 +1,334 @@
+NEW YORK router
+
+NewYork#show run
+Building configuration...
+
+Current configuration : 1401 bytes
+!
+version 16.6.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname NewYork
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+crypto isakmp policy 1
+ encr 3des
+ authentication pre-share
+!
+crypto isakmp key CISCO address 200.1.1.6
+!
+!
+!
+crypto ipsec transform-set 50 esp-aes esp-sha-hmac
+!
+crypto map CMAP 1 ipsec-isakmp 
+ set peer 200.1.1.6
+ set pfs group1
+ set security-association lifetime seconds 900
+ set transform-set 50 
+ match address 101
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 6.6.6.6 255.255.255.0
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/2/0
+ ip address 200.1.1.1 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/2/1
+ ip address 200.1.1.5 255.255.255.252
+ clock rate 2000000
+ crypto map CMAP
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+ip route 9.9.9.0 255.255.255.0 200.1.1.2 
+ip route 200.1.1.0 255.255.255.252 200.1.1.2 
+ip route 10.10.10.0 255.255.255.0 200.1.1.6 
+!
+ip flow-export version 9
+!
+!
+access-list 101 permit ip 6.6.6.0 0.0.0.255 10.10.10.0 0.0.0.255
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
+JOBURG router
+
+Joburg#show run
+Building configuration...
+
+Current configuration : 1211 bytes
+!
+version 16.6.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Joburg
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+class-map type inspect match-any LAN_PROTECTED
+ match protocol dns
+ match protocol icmp
+!
+policy-map type inspect LAN_TO_INTERNET
+ class type inspect LAN_PROTECTED
+  inspect
+!
+!
+!
+zone security LAN
+zone security INTERNET
+zone-pair security LAN_TO_INTERNET source LAN destination INTERNET
+ service-policy type inspect LAN_TO_INTERNET
+!
+!
+interface GigabitEthernet0/0/0
+ ip address 9.9.9.1 255.255.255.0
+ zone-member security LAN
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/2/0
+ ip address 200.1.1.2 255.255.255.252
+ zone-member security INTERNET
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 Serial0/2/0 
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
+
+LONDON router
+
+London#show run
+Building configuration...
+
+Current configuration : 1276 bytes
+!
+version 16.6.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname London
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+crypto isakmp policy 1
+ encr 3des
+ authentication pre-share
+!
+crypto isakmp key CISCO address 200.1.1.5
+!
+!
+!
+crypto ipsec transform-set 50 esp-aes esp-sha-hmac
+!
+crypto map CMAP 1 ipsec-isakmp 
+ set peer 200.1.1.5
+ set pfs group1
+ set security-association lifetime seconds 900
+ set transform-set 50 
+ match address 101
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.10.10.10 255.255.255.0
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/2/0
+ ip address 200.1.1.6 255.255.255.252
+ crypto map CMAP
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 Serial0/2/0 
+!
+ip flow-export version 9
+!
+!
+access-list 101 permit ip 10.10.10.0 0.0.0.255 6.6.6.0 0.0.0.255
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
